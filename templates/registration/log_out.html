@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+            background: url("http://wallpapercave.com/wp/CZ4iUQM.jpg") no-repeat center center fixed;
+        }
+        wrap{
+            text-align:center;
+        }
+    </style>
+
+    <title>TUFC</title>
+</head>
+<body>
+    <div class="wrap">
+        <script>
+            function redirect(){
+                window.location.href = "/";
+            }
+            setTimeout(redirect, 2000);
+        </script>
+        {% block body %}
+            <p class="success">You successfully logged out!! Redirecting to Main Page...</p>
+        {% endblock %}
+    </div>
+</body>
+</html>

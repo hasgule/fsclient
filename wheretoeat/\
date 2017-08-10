@@ -1,0 +1,36 @@
+from django.shortcuts import render
+from .models import Venue
+from .models import VenueSearch
+import json
+import requests
+import sys
+
+def get_venues(query, near):
+        url = "https://api.foursquare.com/v2/venues/search?client_id=V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK&client_secret=L5RZFRA1K2KPH33H12BFD3MECOJKEBIJSLP14KXYRYW3A5AF&v=20170423"
+        params = { 'near' : near , 'query' : query}
+        r = requests.get(url, params=params)
+        result = r.json()
+        #print(result)
+        res = result["response"]["venues"]
+        #print(res)
+        l = list()
+
+        for r in res:
+                if(r["contact"]):
+                        print(r)
+                        obj = dict()
+                        obj['name'] = r["name"]
+                        obj['phone_number'] = r["contact"]["phone"]
+                        obj['checkin_count'] = r["stats"]["checkinsCount"]
+                        l.append(obj)
+
+        venue_list = {"venues" : l}
+
+
+def search_list(request):     
+	searches = VenueSearch.objects.all()
+	return render(request, 'wheretoeat/result.html', {'searches':searches})
+
+def venue_list(request):
+	venues = get_venues("Pizza", "Gaziantep")
+	return render(request, 'wheretoeat/result.html', {'venues':venues})

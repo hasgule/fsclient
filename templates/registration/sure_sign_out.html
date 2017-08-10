@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+            background: url("http://wallpapercave.com/wp/CZ4iUQM.jpg") no-repeat center center fixed;
+        }
+        wrap{
+            text-align:center;
+        }
+        form{
+            align:center;
+            text-align:center;
+        }
+
+    </style>
+
+    <title>TUFC</title>
+
+</head>
+<body>
+    <div class="wrap">
+        <form method="POST" action="{% url 'wheretoeat:sign_out' %}" class="form">
+            </br></br></br></br>Are you sure?</br></br>
+            <input type="submit" name="YES" value="YES">
+            <input type="submit" name="NO" value="NO">
+        </form>
+    </div>
+</body>
+</html>
+

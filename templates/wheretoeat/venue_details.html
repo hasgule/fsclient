@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TUFC</title>
+    <style>
+        body {
+            font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+            background: url("http://wallpapercave.com/wp/CZ4iUQM.jpg") no-repeat center center fixed;
+        }
+        tr:nth-child(even) {
+            color:black;
+            background-color: #f2f2f2
+        }
+        th {
+            font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+        td {
+            font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+    <table style="width:100%">
+        {% if name %}
+        <tr>
+            <th>Name:</th>
+            <td>{{ name }}</td>
+        </tr>
+        {% endif %}
+        {% if location %}
+        <tr>
+            <th>Location</th>
+            <td>
+                {% for item in location %}
+                    {{ item }}
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+        {% if contact %}
+        <tr>
+            <th>Contact:</th>
+            <td>{{ contact }}</td>
+        </tr>
+        {% endif %}
+        {% if canonicalUrl %}
+        <tr>
+            <th>Foursquare Url:</th>
+            <td>{{ canonicalUrl }}</td>
+        </tr>
+        {% endif %}
+        {% if url %}
+        <tr>
+            <th>Website Url:</th>
+            <td>{{ url }}</td>
+        </tr>
+        {% endif %}
+        {% if stats %}
+        <tr>
+            <th>Checkin Count:</th>
+            <td>{{ stats }}</td>
+        </tr>
+        {% endif %}
+    </table>
+    </br>
+    <a href="{% url 'wheretoeat:index' %}" class="link">Go Back to Mainpage</a>
+</body>
+</html>
