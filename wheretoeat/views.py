@@ -125,7 +125,7 @@ def login_user(request):
         else:
             return render(request, 'wheretoeat/result.html')
 
-def log_out(request):
+def log__out(request):
     return auth_views.logout(request)
 
 
