@@ -22,14 +22,12 @@
             }
             setTimeout(redirect, 2000);
         </script>
-        {% block body %}
-            {% if yes %}
-                <p class="success">Your account has been deleted!</p>
-            {% else %}
-                <p class="success">Your account is saved!!</p>
-            {% endif %}
+        {% if YES %}
+            <p class="success">Your account has been deleted!</p>
+        {% else %}
+            <p class="success">Your account is saved!!</p>
+        {% endif %}
             <p class="redirect">Redirecting to Main Page...</p>
-        {% endblock %}
     </div>
 </body>
 </html>

@@ -74,6 +74,6 @@ class ChatAdmin(admin.ModelAdmin):
 admin.site.register(Venue, VenueAdmin)
 admin.site.register(VenueSearch, VenueSearchAdmin)
 admin.site.register(Chat, ChatAdmin)
-admin.site.unregister(User)
-admin.site.register(UserProfile, UserProfileAdmin)
+#admin.site.unregister(User)
+#admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Display, DisplayAdmin)

@@ -154,10 +154,14 @@ def signedup(request):
     render(request, 'registration/signedup.html')
 
 def sign_out(request):
-    if request.POST.get('YES'):
-        my_user = User.objects.get(username = request.user.username)
+    print(request.POST.get("YES"))
+    if request.POST.get('YES', False):
+        my_user = UserProfile.objects.get(username=request.user.username)
         my_user.delete()
-    return render(request, 'registration/sign_out.html')
+        User.objects.get(username=request.user.username).delete()
+        return render(request, 'registration/sign_out.html', {'YES': True})
+    else:
+        return render(request, 'registration/sign_out.html')
 
 def get_venues(query, near):
     url = "https://api.foursquare.com/v2/venues/search?client_id=V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK&client_secret=L5RZFRA1K2KPH33H12BFD3MECOJKEBIJSLP14KXYRYW3A5AF&v=20170423"
@@ -295,7 +299,7 @@ def who_displayed(request):
     return render(request, 'wheretoeat/whodisplayed.html', {'display_list': list})
 
 def sure_sign_out(request):
-    return render(request, 'registration/sure_sign_out.html')
+    return render(request, 'registration/sure_sign_out.html', {'YES': True})
 
 def venue_details(request):
     venue_name = request.GET.get('venue_name')

@@ -22,6 +22,7 @@
 <body>
     <div class="wrap">
         <form method="POST" action="{% url 'wheretoeat:sign_out' %}" class="form">
+            {% csrf_token %}
             </br></br></br></br>Are you sure?</br></br>
             <input type="submit" name="YES" value="YES">
             <input type="submit" name="NO" value="NO">
