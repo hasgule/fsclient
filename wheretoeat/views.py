@@ -318,7 +318,8 @@ def venue_details(request):
             information = get_venue_information(my_id)
             location = information["location"]["formattedAddress"]
             name = information["name"]
-            contact = information["contact"]["phone"]
+            if information["contact"]["phone"]:
+                contact = information["contact"]["phone"]
             canonicalUrl = information["canonicalUrl"]
             url = information["url"]
             stats = information["stats"]["checkinsCount"]
