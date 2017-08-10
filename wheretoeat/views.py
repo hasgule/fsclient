@@ -126,8 +126,8 @@ def login_user(request):
             return render(request, 'wheretoeat/result.html')
 
 def log__out(request):
-    return auth_views.logout(request)
-
+    auth_views.logout(request)
+    return render(request, 'wheretoeat/result.html')
 
 
 def SignUp(request):
