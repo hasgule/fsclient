@@ -28,10 +28,6 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, '../static'),
 )
 
-a = 'lol'
-
-b = 'lel'
-
 ROOT_URLCONF = 'hipo.urls'
 WSGI_APPLICATION = 'hipo.wsgi.application'
 
