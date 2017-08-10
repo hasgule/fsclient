@@ -296,7 +296,6 @@
                             <a href="{%  url 'wheretoeat:new_message_page' %}">Send Message</a>
                         </li>
                     {% endif %}
-
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -309,7 +308,7 @@
                 <table>
                     <tr><th> People who displayed my profile:</th></tr>
                         {% for display in display_list %}
-                            <tr><td>{{ display.displayed_by }}</td></tr>
+                            <tr><td><a href="{% url 'wheretoeat:my_profile' %}?name={{display.displayed_by}}">{{ display.displayed_by }}</a></td></tr>
                         {% endfor %}
                 </table>
             </div>
