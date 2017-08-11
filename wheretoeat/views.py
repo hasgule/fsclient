@@ -319,7 +319,8 @@ def venue_details(request):
             address = location.get("formattedAddress", None)
             name = information.get("name",None)
             contact = information.get("contact", None)
-            phone = contact.get("phone",None)
+            if contact["phone"]:
+                phone = contact["phone"]
             canonicalUrl = information.get("canonicalUrl",None)
             stats = information.get("stats",None)
             checkin = stats.get("checkinsCount", None)
