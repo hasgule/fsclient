@@ -317,10 +317,10 @@ def venue_details(request):
             information = get_venue_information(my_id)
             location = information.get("location", None)
             address = location.get("formattedAddress", None)
-            name = information.get("name",None)
-            contact = information.get("contact", None)
-            if contact["phone"]:
-                phone = contact["phone"]
+            name = information.get("name", None)
+            if information["contact"]:
+                if information["contact"]["phone"]:
+                 phone = information["contact"]["phone"]
             canonicalUrl = information.get("canonicalUrl",None)
             stats = information.get("stats",None)
             checkin = stats.get("checkinsCount", None)
