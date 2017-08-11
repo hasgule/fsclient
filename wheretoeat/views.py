@@ -320,7 +320,7 @@ def venue_details(request):
             name = information.get("name", None)
             if information['contact']:
                 if information['contact']['phone']:
-                 phone = information["contact"]["phone"]
+                    phone = information['contact']['phone']
             canonicalUrl = information.get("canonicalUrl",None)
             stats = information.get("stats",None)
             checkin = stats.get("checkinsCount", None)
