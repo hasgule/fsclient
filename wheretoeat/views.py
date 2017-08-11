@@ -316,15 +316,17 @@ def venue_details(request):
         if(venue["name"]==venue_name):
             my_id = venue["venue_id"]
             information = get_venue_information(my_id)
-            if information["location"]["formattedAddress"]:
-                location = information["location"]["formattedAddress"]
+            if "location" in information:
+                if "formattedAddress" in information["location"]:
+                    location = information["location"]["formattedAddress"]
             name = information["name"]
             if information["contact"]:
-                if information["contact"]["phone"]:
+                if "phone" in information["contact"]:
                     contact = information["contact"]["phone"]
+
             if "canonicalUrl" in information:
                 canonicalUrl = information["canonicalUrl"]
             if "url" in information:
                 url = information["url"]
             stats = information["stats"]["checkinsCount"]
-    return render(request, 'wheretoeat/venue_details.html', {'location':location, 'name':name, 'contact':contact , 'canonicalUrl':canonicalUrl, 'url':url, 'stats':stats})
+    return render(request, 'wheretoeat/venue_details.html', {'location': location, 'name':name, 'contact':contact , 'canonicalUrl':canonicalUrl, 'url':url, 'stats':stats})
