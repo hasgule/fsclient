@@ -306,7 +306,12 @@ def venue_details(request):
     query = request.GET.get('query')
     near = request.GET.get('near')
     venues = get_venues(query,near)
-
+    address = None
+    name = None
+    phone = None
+    canonicalUrl = None
+    url = None
+    checkin = None
     for venue in venues:
         if(venue["name"]==venue_name):
             my_id = venue["venue_id"]
