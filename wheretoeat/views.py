@@ -318,8 +318,8 @@ def venue_details(request):
             location = information.get("location", None)
             address = location.get("formattedAddress", None)
             name = information.get("name", None)
-            if information['contact']:
-                if information['contact']['phone']:
+            if 'contact' in information:
+                if 'phone' in information['contact']:
                     phone = information['contact']['phone']
             canonicalUrl = information.get("canonicalUrl",None)
             stats = information.get("stats",None)
