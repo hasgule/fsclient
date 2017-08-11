@@ -310,7 +310,6 @@ def venue_details(request):
     name = None
     phone = None
     canonicalUrl = None
-    url = None
     checkin = None
     for venue in venues:
         if(venue["name"]==venue_name):
@@ -322,7 +321,6 @@ def venue_details(request):
             contact = information.get("contact", None)
             phone = contact.get("phone",None)
             canonicalUrl = information.get("canonicalUrl",None)
-            url = information.get("url", None)
             stats = information.get("stats",None)
             checkin = stats.get("checkinsCount", None)
-    return render(request, 'wheretoeat/venue_details.html', {'location': address, 'name': name, 'contact': phone , 'canonicalUrl': canonicalUrl, 'url': url, 'stats': checkin})
+    return render(request, 'wheretoeat/venue_details.html', {'location': address, 'name': name, 'contact': phone , 'canonicalUrl': canonicalUrl, 'stats': checkin})
