@@ -318,5 +318,6 @@ def venue_details(request):
             phone = contact.get("phone",None)
             canonicalUrl = information.get("canonicalUrl",None)
             url = information.get("url", None)
-            stats = information["stats"]["checkinsCount"]
-    return render(request, 'wheretoeat/venue_details.html', {'location': address, 'name':name, 'contact':phone , 'canonicalUrl':canonicalUrl, 'url':url, 'stats':stats})
+            stats = information.get("stats",None)
+            checkin = stats.get("checkinsCount", None)
+    return render(request, 'wheretoeat/venue_details.html', {'location': address, 'name': name, 'contact': phone , 'canonicalUrl': canonicalUrl, 'url': url, 'stats': checkin})
