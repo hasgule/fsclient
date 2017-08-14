@@ -168,7 +168,7 @@ def get_venues(query, near):
     params = {'near': near, 'query': query}
     r = requests.get(url, params=params)
     result = r.json()
-    if result["response"] is not None:
+    if result["response"] is False:
         res = result["response"]["venues"]
         l = list()
         for r in res:
