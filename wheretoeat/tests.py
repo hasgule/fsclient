@@ -4,6 +4,15 @@ from django.db import models
 from django.utils import six
 from django.utils.translation import ugettext_lazy
 
+from django.test import TestCase
+
+
+class SimpleTest(TestCase):
+    def test_basic_addition(self):
+        """
+        Tests that 1 + 1 always equals 2.
+        """
+        self.assertEqual(1 + 1, 2)
 
 class TestModel(models.Model):
     title = models.CharField(ugettext_lazy('title'), max_length=255)

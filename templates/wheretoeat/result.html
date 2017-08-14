@@ -234,7 +234,7 @@
                 <div class="address-bar">
                     {% if user.is_authenticated %}
                             <p style="color:#33CCE6">Welcome {{ user }}!</p>
-                            <a href="{% url 'wheretoeat:log__out' %}" style="color:#33CCE6" >Log Out</a>
+                            <a href="{% url 'wheretoeat:log_out' %}" style="color:#33CCE6" >Log Out</a>
                             <p>   </p>
                             <a href="{% url 'wheretoeat:sure_sign_out' %}" style="color:#33CCE6" >Delete Account</a>
                     {% else %}
@@ -405,7 +405,6 @@
     <script src="{% static 'jquery-ui-1.12.1/jquery-ui.js'  %}"></script>
 
     <script>
-        {% load i18n %}
         function myFunction()
         {
             var v1=document.getElementById("query_search").value;
@@ -441,9 +440,6 @@
             $('.selectpicker').selectpicker();
         });
     </script>
-
-
-
 </body>
 </html>
 

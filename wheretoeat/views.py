@@ -125,7 +125,7 @@ def login_user(request):
         else:
             return render(request, 'wheretoeat/result.html')
 
-def log__out(request):
+def log_out(request):
     auth_views.logout(request)
     return render(request, 'wheretoeat/result.html')
 
@@ -168,20 +168,23 @@ def get_venues(query, near):
     params = {'near': near, 'query': query}
     r = requests.get(url, params=params)
     result = r.json()
-    res = result["response"]["venues"]
-    l = list()
-    for r in res:
-        obj = dict()
-        obj['venue_id'] = r["id"]
-        obj['name'] = r["name"]
-        obj['phone_number'] = None
-        if r["contact"]:
-            obj['phone_number'] = r["contact"].get("phone", '')
-        else:
-            obj['phone_number'] = ''
-        obj['checkin_count'] = r["stats"]["checkinsCount"]
-        l.append(obj)
-    return l
+    if result["response"]:
+        if result["response"]["venues"]:
+            res = result["response"]["venues"]
+            l = list()
+            for r in res:
+                obj = dict()
+                obj['venue_id'] = r["id"]
+                obj['name'] = r["name"]
+                obj['phone_number'] = None
+                if r["contact"]:
+                    obj['phone_number'] = r["contact"].get("phone", '')
+                else:
+                    obj['phone_number'] = ''
+                obj['checkin_count'] = r["stats"]["checkinsCount"]
+                l.append(obj)
+            return l
+
 
 def get_venue_information(venue_id):
     url = "https://api.foursquare.com/v2/venues/"
@@ -245,15 +248,17 @@ def index(request):
             my__query = request.GET.get('my_query')
             my__near = request.GET.get('my_near')
             if my__query and my__near:
-                query = VenueSearch.objects.create(query=my__query, near=my__near, owner=my_owner)
-                last_search_id = VenueSearch.objects.latest('id')
-                venues = get_venues(my__query, my__near)
                 if request.GET.get('page') is None:
-                    for venue_result in venues:
-                        myPhone = venue_result.get('phone_number', '')
-                        venue_query = Venue.objects.create(venue_id = venue_result['venue_id'],name=venue_result['name'], phone_number=myPhone,
-                                                           checkin_count=venue_result['checkin_count'], search_id=last_search_id)
-                        venue_query.save()
+                    query = VenueSearch.objects.create(query=my__query, near=my__near, owner=my_owner)
+                last_search_id = VenueSearch.objects.latest('id')
+                if get_venues(my__query, my__near) is not None:
+                    venues = get_venues(my__query, my__near)
+                    if request.GET.get('page') is None:
+                        for venue_result in venues:
+                            myPhone = venue_result.get('phone_number', '')
+                            venue_query = Venue.objects.create(venue_id = venue_result['venue_id'],name=venue_result['name'], phone_number=myPhone,
+                                                               checkin_count=venue_result['checkin_count'], search_id=last_search_id)
+                            venue_query.save()
 
     if venues:
         paginator = Paginator(venues, 10)
