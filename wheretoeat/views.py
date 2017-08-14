@@ -168,19 +168,18 @@ def get_venues(query, near):
     params = {'near': near, 'query': query}
     r = requests.get(url, params=params)
     result = r.json()
-    if result["response"]:
-        if result["response"]["venues"]:
-            res = result["response"]["venues"]
-            l = list()
-            for r in res:
-                obj = dict()
-                obj['venue_id'] = r["id"]
-                obj['name'] = r["name"]
-                obj['phone_number'] = None
-                if r["contact"]:
-                    obj['phone_number'] = r["contact"].get("phone", '')
-                else:
-                    obj['phone_number'] = ''
+    if result["response"]["venues"]:
+        res = result["response"]["venues"]
+        l = list()
+        for r in res:
+            obj = dict()
+            obj['venue_id'] = r["id"]
+            obj['name'] = r["name"]
+            obj['phone_number'] = None
+            if r["contact"]:
+                obj['phone_number'] = r["contact"].get("phone", '')
+            else:
+                obj['phone_number'] = ''
                 obj['checkin_count'] = r["stats"]["checkinsCount"]
                 l.append(obj)
             return l
