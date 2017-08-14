@@ -248,7 +248,7 @@ def index(request):
             my__query = request.GET.get('my_query')
             my__near = request.GET.get('my_near')
             if my__query and my__near:
-                if request.GET.get('page') is None:
+                if request.GET.get('page') is None and get_venues(my__query, my__near) is not None:
                     query = VenueSearch.objects.create(query=my__query, near=my__near, owner=my_owner)
                 last_search_id = VenueSearch.objects.latest('id')
                 if get_venues(my__query, my__near) is not None:
