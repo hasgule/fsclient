@@ -248,17 +248,22 @@ def index(request):
             my__query = request.GET.get('my_query')
             my__near = request.GET.get('my_near')
             if my__query and my__near:
-                if request.GET.get('page') is None and get_venues(my__query, my__near) is not None:
+                if request.GET.get('page') is None:
                     query = VenueSearch.objects.create(query=my__query, near=my__near, owner=my_owner)
                 last_search_id = VenueSearch.objects.latest('id')
-                if get_venues(my__query, my__near) is not None:
-                    venues = get_venues(my__query, my__near)
-                    if request.GET.get('page') is None:
-                        for venue_result in venues:
-                            myPhone = venue_result.get('phone_number', '')
-                            venue_query = Venue.objects.create(venue_id = venue_result['venue_id'],name=venue_result['name'], phone_number=myPhone,
-                                                               checkin_count=venue_result['checkin_count'], search_id=last_search_id)
-                            venue_query.save()
+                try:
+                    if get_venues(my__query, my__near) is not None:
+                        venues = get_venues(my__query, my__near)
+                        if request.GET.get('page') is None:
+                            for venue_result in venues:
+                                myPhone = venue_result.get('phone_number', '')
+                                venue_query = Venue.objects.create(venue_id = venue_result['venue_id'],name=venue_result['name'], phone_number=myPhone,
+                                                                   checkin_count=venue_result['checkin_count'], search_id=last_search_id)
+                                venue_query.save()
+                except:
+                    if KeyError:
+                        pass
+
 
     if venues:
         paginator = Paginator(venues, 10)
