@@ -215,18 +215,19 @@ def get_prev(request):
     desired_query = request.GET.get('query')
     desired_near = request.GET.get('near')
     desired_venues = list()
-    for venue in get_venues(desired_query, desired_near):
-        desired_venues.append(venue)
-    page = request.GET.get('page', 1)
-    paginator = Paginator(desired_venues, 10)
-    try:
-        paginated_venues = paginator.page(page)
-    except PageNotAnInteger:
-        paginated_venues = paginator.page(1)
-    except EmptyPage:
-        paginated_venues = paginator.page(paginator.num_pages)
-    return render(request, 'wheretoeat/venue_search.html',
-                  {'venues': paginated_venues, 'query': desired_query, 'near': desired_near})
+    if get_venues(desired_query, desired_near):
+        for venue in get_venues(desired_query, desired_near):
+            desired_venues.append(venue)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(desired_venues, 10)
+        try:
+            paginated_venues = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_venues = paginator.page(1)
+        except EmptyPage:
+            paginated_venues = paginator.page(paginator.num_pages)
+        return render(request, 'wheretoeat/venue_search.html',
+                      {'venues': paginated_venues, 'query': desired_query, 'near': desired_near})
 
 
 def venue_list(request):
