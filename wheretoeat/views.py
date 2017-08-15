@@ -179,7 +179,11 @@ def get_venues(query, near):
     params = {'near': near, 'query': query}
     r = requests.get(url, params=params)
     result = r.json()
-    if result["response"]["venues"]:
+    if "errorType" in result["meta"]:
+        return None
+    elif (result["response"]["geocode"] is not None) and (result["response"]["venues"] is None):
+        return None
+    elif result["response"]["venues"]:
         res = result["response"]["venues"]
         l = list()
         for r in res:
@@ -255,15 +259,16 @@ def index(request):
         if request.GET.get('my_near'):
             my__query = request.GET.get('my_query')
             my__near = request.GET.get('my_near')
-            if (request.GET.get('dont') == 'save') is False:
-                VenueSearch.objects.create(query=my__query, near=my__near, owner=my_owner)
-            last_search_id = VenueSearch.objects.latest('id')
             venues = get_venues(my__query, my__near)
-            for venue_result in venues:
-                phone = venue_result.get('phone_number', '')
-                Venue.objects.create(venue_id=venue_result['venue_id'], name=venue_result['name'],
-                                     phone_number=phone, checkin_count=venue_result['checkin_count'],
-                                     search_id=last_search_id)
+            if (venues == None) is False:
+                if (request.GET.get('dont') == 'save') is False:
+                    VenueSearch.objects.create(query=my__query, near=my__near, owner=my_owner)
+                last_search_id = VenueSearch.objects.latest('id')
+                for venue_result in venues:
+                    phone = venue_result.get('phone_number', '')
+                    Venue.objects.create(venue_id=venue_result['venue_id'], name=venue_result['name'],
+                                         phone_number=phone, checkin_count=venue_result['checkin_count'],
+                                         search_id=last_search_id)
     if venues:
         paginator = Paginator(venues, 10)
         try:
