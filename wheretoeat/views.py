@@ -215,7 +215,8 @@ def get_prev(request):
     desired_query = request.GET.get('query')
     desired_near = request.GET.get('near')
     desired_venues = list()
-    if get_venues(desired_query, desired_near):
+    paginated_venues = None
+    if get_venues(desired_query, desired_near) is not None:
         for venue in get_venues(desired_query, desired_near):
             desired_venues.append(venue)
         page = request.GET.get('page', 1)
