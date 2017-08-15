@@ -227,8 +227,9 @@ def get_prev(request):
             paginated_venues = paginator.page(1)
         except EmptyPage:
             paginated_venues = paginator.page(paginator.num_pages)
-        return render(request, 'wheretoeat/venue_search.html',
-                      {'venues': paginated_venues, 'query': desired_query, 'near': desired_near})
+    return render(request, 'wheretoeat/venue_search.html', {'venues': paginated_venues,
+                                                            'query': desired_query,
+                                                            'near': desired_near})
 
 
 def venue_list(request):
