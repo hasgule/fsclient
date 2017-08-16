@@ -101,6 +101,11 @@ def password_reset(request):
                 message.attach_alternative(html_content, "text/html")
                 message.send()
                 return redirect('wheretoeat:password_reset_done')
+            else:
+                messages.warning(request, 'Enter a valid email address.')
+                return render(request, "registration/password_reset_form.html", {'form': form})
+        else:
+            return render(request, "registration/password_reset_form.html", {'form': form})
     return render(request, "registration/password_reset_form.html", {'form': form})
 
 
