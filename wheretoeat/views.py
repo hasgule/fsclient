@@ -163,6 +163,7 @@ def log_out(request):
 
 
 def SignUp(request):
+    global messages_viewed
     chat_number = 0
     if request.user.is_authenticated:
         inbox = Chat.objects.filter(to_user=request.user)
@@ -378,7 +379,7 @@ def message_sent(request):
             username = request.POST.get('sent_to_user')
             sent_to_user = UserProfile.objects.get(user__username=username)
             Chat.objects.create(message=message, from_user=request.user, to_user=sent_to_user.user)
-            messages_viewed = True
+            messages_viewed = False
             return render(request, 'wheretoeat/message_sent.html', {'number': chat_number})
         except:
             messages.warning(request, 'Please enter a valid username')
@@ -387,7 +388,7 @@ def message_sent(request):
         username = request.GET.get('user')
         to_user = UserProfile.objects.get(user__username=username)
         Chat.objects.create(message=message, from_user=request.user, to_user=to_user.user)
-        messages_viewed = True
+        messages_viewed = False
     return render(request, 'wheretoeat/message_sent.html', {'number': chat_number, 'view': messages_viewed})
 
 
