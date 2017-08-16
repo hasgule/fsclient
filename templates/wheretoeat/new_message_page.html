@@ -218,7 +218,7 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li>
-                            <a href="{%  url 'wheretoeat:messages' %}">Messages</a>
+                            <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
                         </li>
                     {% endif %}
                         <li>
@@ -228,17 +228,40 @@
             </div>
         </div>
     </nav>
+    {% if prev_chats %}
     <div class="container">
         <div class="row">
             <div class="box">
-                <form method="post" action="{% url 'wheretoeat:message_sent' %}">
+                <table>
+                    <tr><th style="color:deepskyblue;">Previous Messages from {{ chat_user }}</th></tr>
+                    {% for chat in prev_chats %}
+                        <tr>
+                            <td>{{ chat.message}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if messages %}
+    <div class="container">
+        <div class="row">
+            <div class="box">
+                {% for message in messages %}
+                    <h4 style="color:red;">{{ message }}</h4>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="container">
+        <div class="row">
+            <div class="box">
+                <form method="post" action="{% url 'wheretoeat:new_message_page' %}">
                     {% csrf_token %}
                     <input type="text" placeholder="Message" required name="my_message">
-                    {% if my_to_user %}
-                        <input type="text" placeholder="{{ my_to_user }}" required name="my_to_user" value={{ my_to_user }}>
-                    {% else %}
-                        <input type="text" placeholder="To whom?" required name="my_to_user" value={{ my_to_user }}>
-                    {% endif %}
+                    <input type="text" placeholder="To whom?" required name="sent_to_user">
                     <input type="submit" value="Send!" class="button">
                 </form>
             </div>

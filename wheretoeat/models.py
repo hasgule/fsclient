@@ -28,7 +28,7 @@ def update_user_profile(sender, instance, created, **kwargs):
 class Chat(models.Model):
     created = models.DateTimeField(auto_now_add=True, null='True', blank='True')
     from_user = models.ForeignKey(User, related_name='creator')
-    to_user = models.CharField(max_length=30)
+    to_user = models.ForeignKey(User, related_name='receiver')
     message = models.CharField(max_length=200)
 
     def __unicode__(self):

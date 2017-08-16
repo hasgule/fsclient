@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'wheretoeat',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',

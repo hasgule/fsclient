@@ -1,6 +1,6 @@
-from django.utils.translation import get_language, activate
 from .models import Venue,VenueSearch, Chat, Display, UserProfile
-from .forms import SignUpForm, ContactForm, ProfileForm
+from .forms import SignUpForm, ContactForm
+from django.contrib import messages
 from django.contrib.sessions.models import Session
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
@@ -125,10 +125,17 @@ def login_user(request):
                 if request.user.is_authenticated:
                     my_searches = VenueSearch.objects.filter(owner=request.user)
                     desired_searches = list(islice(reversed(my_searches), 0, 5))
-                return render(request, 'wheretoeat/result.html', {'searches': desired_searches,
+                    return render(request, 'wheretoeat/result.html', {'searches': desired_searches,
                                                                   'user_query': desired_users})
+                else:
+                    messages.warning(request, 'Your username or password is wrong, please check again.')
+                    return render(request, 'registration/login.html')
+            else:
+                messages.warning(request, 'Your username or password is wrong, please check again.')
+                return render(request, 'registration/login.html')
         else:
-            return render(request, 'wheretoeat/result.html')
+            messages.warning(request, 'Your username or password is wrong, please check again.')
+            return render(request, 'registration/login.html')
 
 
 def log_out(request):
@@ -269,6 +276,8 @@ def index(request):
                     Venue.objects.create(venue_id=venue_result['venue_id'], name=venue_result['name'],
                                          phone_number=phone, checkin_count=venue_result['checkin_count'],
                                          search_id=last_search_id)
+            else:
+                messages.warning(request, 'Please make a valid search!')
     if venues:
         paginator = Paginator(venues, 10)
         try:
@@ -294,22 +303,41 @@ def all_users(request):
     return render(request, 'wheretoeat/all_users.html', {'my_list': my_list})
 
 
-def messages(request):
+def chatmessages(request):
     chats = Chat.objects.filter(to_user=request.user).order_by('-created')
-    return render(request, 'wheretoeat/messages.html', {'chats': chats})
+    return render(request, 'wheretoeat/chatmessages.html', {'chats': chats})
 
 
 def message_sent(request):
-    to_user = request.POST.get('my_to_user')
     message = request.POST.get('my_message')
+    if request.GET.get('my_to_user'):
+        username = request.GET.get('my_to_user')
+        to_user = User.objects.get(username=username)
+    else:
+        username = request.GET.get('user')
+        to_user = User.objects.get(username=username)
     Chat.objects.create(message=message, from_user=request.user, to_user=to_user)
     return render(request, 'wheretoeat/message_sent.html')
 
 
 def new_message_page(request):
+    if request.POST.get('sent_to_user'):
+        try:
+            username = request.POST.get('sent_to_user')
+            sent_to_user = User.objects.get(username=username)
+            return render(request, 'wheretoeat/message_sent.html', {'my_to_user': sent_to_user})
+        except:
+            messages.warning(request, 'Please enter a valid username')
+            return render(request, 'wheretoeat/new_message_page.html')
     if request.GET.get('my_to_user'):
-        to_user = request.GET.get('my_to_user')
-        return render(request, 'wheretoeat/new_message_page.html', {'my_to_user': to_user})
+        username = request.GET.get('my_to_user')
+        if User.objects.get(username=username):
+            to_user = User.objects.get(username=username)
+            chat_list = Chat.objects.filter(from_user=to_user, to_user=request.user)
+        else:
+            to_user = None
+            chat_list = None
+        return render(request, 'wheretoeat/new_message_page.html', {'prev_chats': chat_list, 'chat_user': to_user})
     else:
         return render(request, 'wheretoeat/new_message_page.html')
 

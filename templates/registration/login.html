@@ -261,6 +261,11 @@
             <div class="box">
                 <div class="wrap">
                     {% block content %}
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <h7 style="color:red; text-align:center;">{{ message }}</h7>
+                                {% endfor %}
+                            {% endif %}
                         <h2 style="text-align:center;">Login</h2>
                         <form method="post" action="{% url 'wheretoeat:login_user' %}">
                             {% csrf_token %}

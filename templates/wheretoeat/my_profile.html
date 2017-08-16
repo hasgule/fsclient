@@ -210,7 +210,7 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li>
-                         <a href="{%  url 'wheretoeat:messages' %}">Messages</a>
+                         <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
                         </li>
                     {% endif %}
                     {% if user.is_authenticated %}
@@ -234,30 +234,40 @@
                     {% else %}
                         <img width="200px" height="250px" class="pull-left gap-right" src="https://s-media-cache-ak0.pinimg.com/236x/5b/00/17/5b0017fa4ba19e7bbed08eac0c6a29db--profile-pictures-memes.jpg" />
                     {% endif %}
-
+                    <div>
+                        <p> First Name: {{ desired_user.first_name  }}</p>
+                        <p> Last Name: {{ desired_user.last_name  }}</p>
+                        <p> Username: {{ desired_user.username }}</p>
+                        <p> Email: {{ desired_user.email }} </p>
+                        <p> Sign Up Date: {{ desired_user.date_joined }}</p>
+                    </div>
+                    <form name = "form" enctype = "multipart/form-data"
+                         action = "{% url "wheretoeat:my_profile" %}" method = "POST" >
+                         {% csrf_token %}
+                         <div>
+                             <input type = "file" placeholder = "Picture" name = "image" />
+                             <button class="photo_submit" type = "submit" value = "Upload" >Update Profile Picture</button>
+                         </div>
+                    </form>
                 {% else %}
                     {% if desired_user.image %}
                         <img  width="200px" height="250px" class="pull-left gap-right" src="{{desired_user.image.url}}" />
                     {% else %}
                         <img width="200px" height="250px" class="pull-left gap-right" src="https://s-media-cache-ak0.pinimg.com/236x/5b/00/17/5b0017fa4ba19e7bbed08eac0c6a29db--profile-pictures-memes.jpg" />
                     {% endif %}
-                {% endif %}
-                <div>
-                    <p> First Name: {{ desired_user.first_name  }}</p>
-                    <p> Last Name: {{ desired_user.last_name  }}</p>
-                    <p> Username: {{ desired_user.username }}</p>
-                    <p> Email: {{ desired_user.email }} </p>
-                    <p> Sign Up Date: {{ desired_user.date_joined }}</p>
-                </div>
-                {% if desired_user.username == active_user.username  %}
-                <form name = "form" enctype = "multipart/form-data"
-                     action = "{% url "wheretoeat:my_profile" %}" method = "POST" >
-                     {% csrf_token %}
-                     <div>
-                         <input type = "file" placeholder = "Picture" name = "image" />
-                         <button class="photo_submit" type = "submit" value = "Upload" >Update Profile Picture</button>
-                     </div>
-                </form>
+                    <div>
+                        <p> First Name: {{ desired_user.first_name  }}</p>
+                        <p> Last Name: {{ desired_user.last_name  }}</p>
+                        <p> Username: {{ desired_user.username }}</p>
+                        <p> Email: {{ desired_user.email }} </p>
+                        <p> Sign Up Date: {{ desired_user.date_joined }}</p>
+                    </div>
+                    <form method="post" action="{% url 'wheretoeat:message_sent' %}?user={{ desired_user.user.username }}">
+                        {% csrf_token %}
+                        <p style="color:deepskyblue;"> Send Message to {{ desired_user.username }}</p>
+                        <input type="text" placeholder="Message" required name="my_message">
+                        <input type="submit" value="Send!" class="button">
+                    </form>
                 {% endif %}
             </div>
         </div>
