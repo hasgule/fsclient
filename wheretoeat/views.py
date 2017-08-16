@@ -348,7 +348,7 @@ def chatmessages(request):
     chats = Chat.objects.filter(to_user=user).order_by('-created')
     outbox = Chat.objects.filter(from_user=user).order_by('-created')
     for chat in outbox:
-        print(chat.from_user)
+        print(chat.message)
     return render(request, 'wheretoeat/chatmessages.html', {'chats': chats, 'outbox': outbox, 'number': chat_number})
 
 
