@@ -217,9 +217,15 @@
                     </li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                        <li>
-                            <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
-                        </li>
+                        {% if number == 0 %}
+                            <li>
+                             <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
+                            </li>
+                        {% else %}
+                            <li>
+                             <a style="color:red;" href="{%  url 'wheretoeat:chatmessages' %}">Messages({{ number }})</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                         <li>
                             <a href="{%  url 'wheretoeat:new_message_page' %}">Send Message</a>
@@ -258,7 +264,7 @@
     <div class="container">
         <div class="row">
             <div class="box">
-                <form method="post" action="{% url 'wheretoeat:new_message_page' %}">
+                <form method="post" action="{% url 'wheretoeat:message_sent' %}">
                     {% csrf_token %}
                     <input type="text" placeholder="Message" required name="my_message">
                     <input type="text" placeholder="To whom?" required name="sent_to_user">

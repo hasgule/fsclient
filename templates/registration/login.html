@@ -243,9 +243,15 @@
                     </li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                        <li>
-                         <a href="{%  url 'wheretoeat:messages' %}">Messages</a>
-                        </li>
+                        {% if number == 0 %}
+                            <li>
+                             <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
+                            </li>
+                        {% else %}
+                            <li>
+                             <a style="color:red;" href="{%  url 'wheretoeat:chatmessages' %}">Messages({{ number }})</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li>

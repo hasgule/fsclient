@@ -31,6 +31,11 @@ def venue_history_find(request):
 
 
 def my_profile(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
     if request.FILES.get('image'):
         new_image = request.FILES.get('image')
         user = request.user
@@ -47,7 +52,8 @@ def my_profile(request):
     else:
         my_user = request.user
     active_user = request.user
-    return render(request, 'wheretoeat/my_profile.html', {'desired_user': my_user, 'active_user': active_user})
+    return render(request, 'wheretoeat/my_profile.html', {'desired_user': my_user, 'active_user': active_user,
+                                                          'number': chat_number})
 
 
 def get_current_users():
@@ -114,6 +120,11 @@ def password_reset_done(request):
 
 
 def login_user(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
     desired_searches = ()
     user_list = User.objects.filter()
     temporary_list = user_list[:3]
@@ -131,7 +142,7 @@ def login_user(request):
                     my_searches = VenueSearch.objects.filter(owner=request.user)
                     desired_searches = list(islice(reversed(my_searches), 0, 5))
                     return render(request, 'wheretoeat/result.html', {'searches': desired_searches,
-                                                                  'user_query': desired_users})
+                                                                  'user_query': desired_users, 'number': chat_number})
                 else:
                     messages.warning(request, 'Your username or password is wrong, please check again.')
                     return render(request, 'registration/login.html')
@@ -223,6 +234,12 @@ def get_venue_information(venue_id):
 
 
 def get_prev(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
+
     desired_query = request.GET.get('query')
     desired_near = request.GET.get('near')
     desired_venues = list()
@@ -238,7 +255,7 @@ def get_prev(request):
         paginated_venues = paginator.page(paginator.num_pages)
     return render(request, 'wheretoeat/venue_search.html', {'venues': paginated_venues,
                                                             'query': desired_query,
-                                                            'near': desired_near})
+                                                            'near': desired_near, 'number': chat_number})
 
 
 def venue_list(request):
@@ -249,6 +266,12 @@ def venue_list(request):
 
 
 def index(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
+
     fifteen_user = get_fifteen_minutes_users()
     current_users = get_current_users()
     user_queries = User.objects.filter()
@@ -300,40 +323,67 @@ def index(request):
     return render(request, 'wheretoeat/result.html', {'searches': desired_searches, 'venues': paginated_venues,
                                                       'current_fifteen_users': fifteen_user,
                                                       'user_query': desired_user_query, 'current_users': current_users,
-                                                      'query': my__query, 'near': my__near, 'my_error': my_error})
+                                                      'query': my__query, 'near': my__near, 'my_error': my_error,
+                                                      'number': chat_number})
 
 
 def all_users(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
+
     my_list = UserProfile.objects.exclude(username=request.user.username)
-    return render(request, 'wheretoeat/all_users.html', {'my_list': my_list})
+    return render(request, 'wheretoeat/all_users.html', {'my_list': my_list, 'number': chat_number})
 
 
 def chatmessages(request):
-    chats = Chat.objects.filter(to_user=request.user).order_by('-created')
-    return render(request, 'wheretoeat/chatmessages.html', {'chats': chats})
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
+    user = request.user
+    chats = Chat.objects.filter(to_user=user).order_by('-created')
+    outbox = Chat.objects.filter(from_user=user).order_by('-created')
+    for chat in outbox:
+        print(chat.from_user)
+    return render(request, 'wheretoeat/chatmessages.html', {'chats': chats, 'outbox': outbox, 'number': chat_number})
 
 
 def message_sent(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
+
     message = request.POST.get('my_message')
-    if request.GET.get('my_to_user'):
-        username = request.GET.get('my_to_user')
-        to_user = User.objects.get(username=username)
-    else:
-        username = request.GET.get('user')
-        to_user = User.objects.get(username=username)
-    Chat.objects.create(message=message, from_user=request.user, to_user=to_user)
-    return render(request, 'wheretoeat/message_sent.html')
-
-
-def new_message_page(request):
     if request.POST.get('sent_to_user'):
         try:
             username = request.POST.get('sent_to_user')
-            sent_to_user = User.objects.get(username=username)
-            return render(request, 'wheretoeat/message_sent.html', {'my_to_user': sent_to_user})
+            sent_to_user = UserProfile.objects.get(user__username=username)
+            Chat.objects.create(message=message, from_user=request.user, to_user=sent_to_user.user)
+            return render(request, 'wheretoeat/message_sent.html', {'number': chat_number})
         except:
             messages.warning(request, 'Please enter a valid username')
-            return render(request, 'wheretoeat/new_message_page.html')
+            return render(request, 'wheretoeat/new_message_page.html', {'number': chat_number})
+    else:
+        username = request.GET.get('user')
+        to_user = UserProfile.objects.get(user__username=username)
+        Chat.objects.create(message=message, from_user=request.user, to_user=to_user.user)
+
+    return render(request, 'wheretoeat/message_sent.html', {'number': chat_number})
+
+
+def new_message_page(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
+
     if request.GET.get('my_to_user'):
         username = request.GET.get('my_to_user')
         if User.objects.get(username=username):
@@ -342,15 +392,22 @@ def new_message_page(request):
         else:
             to_user = None
             chat_list = None
-        return render(request, 'wheretoeat/new_message_page.html', {'prev_chats': chat_list, 'chat_user': to_user})
+        return render(request, 'wheretoeat/new_message_page.html', {'prev_chats': chat_list, 'chat_user': to_user,
+                                                                    'number': chat_number})
     else:
-        return render(request, 'wheretoeat/new_message_page.html')
+        return render(request, 'wheretoeat/new_message_page.html', {'number': chat_number})
 
 
 def who_displayed(request):
+    chat_number = 0
+    if request.user.is_authenticated:
+        inbox = Chat.objects.filter(to_user=request.user)
+        for chat in inbox:
+            chat_number = chat_number + 1
+
     display_list = Display.objects.filter(displayed=request.user)
     my_list = reversed(display_list)
-    return render(request, 'wheretoeat/whodisplayed.html', {'display_list': my_list})
+    return render(request, 'wheretoeat/whodisplayed.html', {'display_list': my_list, 'number': chat_number})
 
 
 def venue_details(request):

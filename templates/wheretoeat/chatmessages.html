@@ -235,9 +235,15 @@
                     </li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                        <li>
-                            <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
-                        </li>
+                        {% if number == 0 %}
+                            <li>
+                             <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
+                            </li>
+                        {% else %}
+                            <li>
+                             <a style="color:red;" href="{%  url 'wheretoeat:chatmessages' %}">Messages({{ number }})</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li>
@@ -267,6 +273,30 @@
                         {% endfor %}
                     {% else %}
                         <p>Inbox is empty</p>
+                    {% endif %}
+                </table>
+           </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="box">
+                <h5>Outbox</h5>
+                <table>
+
+                    {% if outbox %}
+                        <tr>
+                            <th>To</th>
+                            <th>Message</th>
+                        </tr>
+                        {% for out in outbox %}
+                            <tr>
+                                <td>{{ out.to_user}}</td>
+                                <td>{{ out.message}}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <p>Outbox is empty</p>
                     {% endif %}
                 </table>
            </div>
