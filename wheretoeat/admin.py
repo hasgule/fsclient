@@ -59,17 +59,8 @@ class VenueSearchAdmin(admin.ModelAdmin):
 class ChatAdmin(admin.ModelAdmin):
     model = Chat
     list_display = ['from_user', 'to_user', 'message']
-
-    def get_from_username(self, obj):
-        return obj.from_user
-    def get_to_username(self,obj):
-        return obj.to_user
-    def get_message(self,obj):
-        return obj.message
-    get_from_username.short_description = 'From Who?'
-    get_to_username.short_description = 'To Whom?'
-    get_message.short_description = 'Message'
     search_fields = ('from_user', 'to_user', 'message')
+
 
 admin.site.register(Venue, VenueAdmin)
 admin.site.register(VenueSearch, VenueSearchAdmin)

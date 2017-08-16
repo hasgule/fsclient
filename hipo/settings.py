@@ -48,10 +48,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wheretoeat',
+    'django_extensions',
 ]
 
 
-MIDDLEWARE = [
+MIDDLEWARE_CLASSES = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

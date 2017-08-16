@@ -235,14 +235,20 @@
                     </li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                        {% if number == 0 %}
+                        {% if view %}
                             <li>
-                             <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
+                                 <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
                             </li>
                         {% else %}
-                            <li>
-                             <a style="color:red;" href="{%  url 'wheretoeat:chatmessages' %}">Messages({{ number }})</a>
-                            </li>
+                            {% if number == 0 %}
+                                <li>
+                                 <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                 <a style="color:red;" href="{%  url 'wheretoeat:chatmessages' %}">Messages({{ number }})</a>
+                                </li>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                     {% if user.is_authenticated %}
@@ -266,7 +272,7 @@
                         </tr>
                         {% for chat in chats %}
                             <tr>
-                                <td><a href="">{{ chat.from_user}}</a></td>
+                                <td><a href="{% url 'wheretoeat:users' %}?name={{ chat.from_user.username }}">{{ chat.from_user}}</a></td>
                                 <td>{{ chat.message}}<a href="{% url 'wheretoeat:new_message_page' %}?my_to_user={{ chat.from_user }}"><span style="color:darkblue; "class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
                             </tr>
                         {% endfor %}
@@ -289,7 +295,7 @@
                         </tr>
                         {% for out in outbox %}
                             <tr>
-                                <td>{{ out.to_user}}</td>
+                                <td><a href="{% url 'wheretoeat:users' %}?name={{ out.to_user.username }}">{{ out.to_user}}</a></td>
                                 <td>{{ out.message}}</td>
                             </tr>
                         {% endfor %}
