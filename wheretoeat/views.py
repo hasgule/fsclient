@@ -155,8 +155,6 @@ def log_out(request):
 
 
 def SignUp(request):
-    unviewed_chat_number = control_messages(request)
-
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -170,6 +168,7 @@ def SignUp(request):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=password)
             login(request, user)
+            unviewed_chat_number = control_messages(request)
             return redirect('wheretoeat:index', {'unviewed_chat_number': unviewed_chat_number})
     else:
         form = SignUpForm()
