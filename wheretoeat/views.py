@@ -169,7 +169,7 @@ def SignUp(request):
             user = authenticate(username=user.username, password=password)
             login(request, user)
             unviewed_chat_number = control_messages(request)
-            return redirect('wheretoeat:index', {'unviewed_chat_number': unviewed_chat_number})
+            return render(request, 'wheretoeat:index', {'unviewed_chat_number': unviewed_chat_number})
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
