@@ -263,7 +263,6 @@ def venue_list(request):
 
 
 def index(request):
-    unviewed_chat_number = control_messages(request)
 
     fifteen_user = get_fifteen_minutes_users()
     current_users = get_current_users()
@@ -313,11 +312,19 @@ def index(request):
         desired_searches = list(islice(reversed(my_searches), 0, 5))
     else:
         desired_searches = list()
-    return render(request, 'wheretoeat/result.html', {'searches': desired_searches, 'venues': paginated_venues,
+    if request.user.is_authenticated:
+        unviewed_chat_number = control_messages(request)
+        return render(request, 'wheretoeat/result.html', {'searches': desired_searches, 'venues': paginated_venues,
                                                       'current_fifteen_users': fifteen_user,
                                                       'user_query': desired_user_query, 'current_users': current_users,
                                                       'query': my__query, 'near': my__near, 'my_error': my_error,
                                                       'unviewed_chat_number': unviewed_chat_number})
+    else:
+        return render(request, 'wheretoeat/result.html', {'searches': desired_searches, 'venues': paginated_venues,
+                                                          'current_fifteen_users': fifteen_user,
+                                                          'user_query': desired_user_query,
+                                                          'current_users': current_users,
+                                                          'query': my__query, 'near': my__near, 'my_error': my_error})
 
 
 def all_users(request):
