@@ -30,6 +30,7 @@ class Chat(models.Model):
     from_user = models.ForeignKey(User, related_name='creator')
     to_user = models.ForeignKey(User, related_name='receiver')
     message = models.CharField(max_length=200)
+    is_viewed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.message

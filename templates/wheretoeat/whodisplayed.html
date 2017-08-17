@@ -287,20 +287,14 @@
                     </li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                        {% if view %}
+                        {% if unviewed_chat_number == 0 %}
                             <li>
-                                 <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
+                                <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
                             </li>
                         {% else %}
-                            {% if number == 0 %}
-                                <li>
-                                 <a href="{%  url 'wheretoeat:chatmessages' %}">Messages</a>
-                                </li>
-                            {% else %}
-                                <li>
-                                 <a style="color:red;" href="{%  url 'wheretoeat:chatmessages' %}">Messages({{ number }})</a>
-                                </li>
-                            {% endif %}
+                            <li>
+                                <a style="color:orangered;" href="{%  url 'wheretoeat:chatmessages' %}">Messages({{ unviewed_chat_number }})</a>
+                            </li>
                         {% endif %}
                     {% endif %}
                     {% if user.is_authenticated %}

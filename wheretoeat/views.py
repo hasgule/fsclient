@@ -1,4 +1,4 @@
-from .models import Venue,VenueSearch, Chat, Display, UserProfile
+from .models import Venue, VenueSearch, Chat, Display, UserProfile
 from .forms import SignUpForm, ContactForm
 from django.contrib import messages
 from django.contrib.sessions.models import Session
@@ -15,8 +15,7 @@ from itertools import islice
 import datetime
 import requests
 from django.http import JsonResponse
-
-messages_viewed = False
+from itertools import chain
 
 def venue_history_find(request):
     if request.user.is_authenticated():
@@ -33,11 +32,8 @@ def venue_history_find(request):
 
 
 def my_profile(request):
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
+
     if request.FILES.get('image'):
         new_image = request.FILES.get('image')
         user = request.user
@@ -55,7 +51,7 @@ def my_profile(request):
         my_user = request.user
     active_user = request.user
     return render(request, 'wheretoeat/my_profile.html', {'desired_user': my_user, 'active_user': active_user,
-                                                          'number': chat_number, 'view': messages_viewed})
+                                                          'unviewed_chat_number': unviewed_chat_number})
 
 
 def get_current_users():
@@ -122,11 +118,6 @@ def password_reset_done(request):
 
 
 def login_user(request):
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
     desired_searches = ()
     user_list = User.objects.filter()
     temporary_list = user_list[:3]
@@ -141,11 +132,12 @@ def login_user(request):
             if user.is_active:
                 login(request, user)
                 if request.user.is_authenticated:
+                    unviewed_chat_number = control_messages(request)
                     my_searches = VenueSearch.objects.filter(owner=request.user)
                     desired_searches = list(islice(reversed(my_searches), 0, 5))
                     return render(request, 'wheretoeat/result.html', {'searches': desired_searches,
-                                                                    'user_query': desired_users, 'number': chat_number,
-                                                                    'view': messages_viewed})
+                                                                      'user_query': desired_users,
+                                                                      'unviewed_chat_number': unviewed_chat_number})
                 else:
                     messages.warning(request, 'Your username or password is wrong, please check again.')
                     return render(request, 'registration/login.html')
@@ -163,12 +155,8 @@ def log_out(request):
 
 
 def SignUp(request):
-    global messages_viewed
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -182,14 +170,15 @@ def SignUp(request):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=password)
             login(request, user)
-            return redirect('wheretoeat:index', {'number': chat_number, 'view': messages_viewed})
+            return redirect('wheretoeat:index', {'unviewed_chat_number': unviewed_chat_number})
     else:
         form = SignUpForm()
-    return render(request, 'registration/signup.html', {'form': form, 'number': chat_number, 'view': messages_viewed})
+    return render(request, 'registration/signup.html', {'form': form})
 
 
 def signedup(request):
-    render(request, 'registration/signedup.html')
+    unviewed_chat_number = control_messages(request)
+    render(request, 'registration/signedup.html', {'unviewed_chat_number': unviewed_chat_number})
 
 
 def sure_sign_out(request):
@@ -243,11 +232,7 @@ def get_venue_information(venue_id):
 
 
 def get_prev(request):
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
 
     desired_query = request.GET.get('query')
     desired_near = request.GET.get('near')
@@ -264,23 +249,21 @@ def get_prev(request):
         paginated_venues = paginator.page(paginator.num_pages)
     return render(request, 'wheretoeat/venue_search.html', {'venues': paginated_venues,
                                                             'query': desired_query,
-                                                            'near': desired_near, 'number': chat_number,
-                                                            'view': messages_viewed})
+                                                            'near': desired_near,
+                                                            'unviewed_chat_number': unviewed_chat_number})
 
 
 def venue_list(request):
+    unviewed_chat_number = control_messages(request)
+
     my__query = request.GET.get('my_query')
     my__near = request.GET.get('my_near')
     venues = get_venues(my__query, my__near)
-    return render(request, 'wheretoeat/result.html', {'venues': venues})
+    return render(request, 'wheretoeat/result.html', {'venues': venues, 'unviewed_chat_number': unviewed_chat_number})
 
 
 def index(request):
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
 
     fifteen_user = get_fifteen_minutes_users()
     current_users = get_current_users()
@@ -334,70 +317,85 @@ def index(request):
                                                       'current_fifteen_users': fifteen_user,
                                                       'user_query': desired_user_query, 'current_users': current_users,
                                                       'query': my__query, 'near': my__near, 'my_error': my_error,
-                                                      'number': chat_number, 'view': messages_viewed})
+                                                      'unviewed_chat_number': unviewed_chat_number})
 
 
 def all_users(request):
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
 
     my_list = UserProfile.objects.exclude(username=request.user.username)
-    return render(request, 'wheretoeat/all_users.html', {'my_list': my_list, 'number': chat_number,
-                                                         'view': messages_viewed})
+    return render(request, 'wheretoeat/all_users.html', {'my_list': my_list,
+                                                         'unviewed_chat_number': unviewed_chat_number})
+
+
+def control_messages(request):
+    unviewed_chat_number = 0
+    list = Chat.objects.filter(to_user=request.user)
+    for chat in list:
+        if chat.is_viewed==False:
+            unviewed_chat_number = unviewed_chat_number+1
+    return unviewed_chat_number
 
 
 def chatmessages(request):
-    global messages_viewed
-    messages_viewed = True
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    user = request.user
+    from_messages = Chat.objects.filter(from_user=user)
+    to_messages = Chat.objects.filter(to_user=user)
+    result_list = sorted(chain(from_messages, to_messages), key=lambda instance: instance.created)
+    if request.GET.get('message_to_delete'):
+        message_to_delete = request.GET.get('message_to_delete')
+        from_user = request.GET.get('from_user_to_delete')
+        from_user_to_delete = UserProfile.objects.get(username=from_user)
+        to_user = request.GET.get('to_user_to_delete')
+        to_user_to_delete = UserProfile.objects.get(username=to_user)
+        chat = Chat.objects.get(message=message_to_delete, from_user=from_user_to_delete.user, to_user=to_user_to_delete.user)
+        chat.delete()
+    if request.GET.get('view'):
+        message = request.GET.get('message')
+        user = request.GET.get('user')
+        chats = Chat.objects.filter(to_user=request.user)
+        for chat in chats:
+            chat.is_viewed = True
+            chat.save()
+        unviewed_chat_number = control_messages(request)
+        return render(request, 'wheretoeat/chatmessages.html', {'view': 'yes', 'user': user, 'chat_view': result_list,
+                                                                'unviewed_chat_number': unviewed_chat_number})
+    unviewed_chat_number = control_messages(request)
     user = request.user
     chats = Chat.objects.filter(to_user=user).order_by('-created')
     outbox = Chat.objects.filter(from_user=user).order_by('-created')
 
-    return render(request, 'wheretoeat/chatmessages.html', {'chats': chats, 'outbox': outbox, 'number': chat_number,
-                                                            'view': messages_viewed})
+    return render(request, 'wheretoeat/chatmessages.html', {'chats': chats, 'outbox': outbox,
+                                                            'unviewed_chat_number': unviewed_chat_number})
 
 
 def message_sent(request):
-    global messages_viewed
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
 
     message = request.POST.get('my_message')
     if request.POST.get('sent_to_user'):
         try:
             username = request.POST.get('sent_to_user')
-            sent_to_user = UserProfile.objects.get(user__username=username)
+            sent_to_user = UserProfile.objects.get(username=username)
             Chat.objects.create(message=message, from_user=request.user, to_user=sent_to_user.user)
-            messages_viewed = False
-            return render(request, 'wheretoeat/message_sent.html', {'number': chat_number})
+            return render(request, 'wheretoeat/message_sent.html', {'unviewed_chat_number': unviewed_chat_number})
         except:
             messages.warning(request, 'Please enter a valid username')
-            return render(request, 'wheretoeat/new_message_page.html', {'number': chat_number})
+            return render(request, 'wheretoeat/new_message_page.html', {'unviewed_chat_number': unviewed_chat_number})
+    elif request.GET.get('sent_to_user'):
+        username = request.GET.get('sent_to_user')
+        sent_to_user = UserProfile.objects.get(username=username)
+        Chat.objects.create(message=message, from_user=request.user, to_user=sent_to_user.user)
+        return render(request, 'wheretoeat/message_sent.html', {'unviewed_chat_number': unviewed_chat_number})
     else:
         username = request.GET.get('user')
-        to_user = UserProfile.objects.get(user__username=username)
+        to_user = UserProfile.objects.get(username=username)
         Chat.objects.create(message=message, from_user=request.user, to_user=to_user.user)
-        messages_viewed = False
-    return render(request, 'wheretoeat/message_sent.html', {'number': chat_number, 'view': messages_viewed})
+        return render(request, 'wheretoeat/message_sent.html', {'unviewed_chat_number': unviewed_chat_number})
 
 
 def new_message_page(request):
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
 
     if request.GET.get('my_to_user'):
         username = request.GET.get('my_to_user')
@@ -408,22 +406,18 @@ def new_message_page(request):
             to_user = None
             chat_list = None
         return render(request, 'wheretoeat/new_message_page.html', {'prev_chats': chat_list, 'chat_user': to_user,
-                                                                    'number': chat_number, 'view': messages_viewed})
+                                                                    'unviewed_chat_number': unviewed_chat_number})
     else:
-        return render(request, 'wheretoeat/new_message_page.html', {'number': chat_number, 'view': messages_viewed})
+        return render(request, 'wheretoeat/new_message_page.html', {'unviewed_chat_number': unviewed_chat_number})
 
 
 def who_displayed(request):
-    chat_number = 0
-    if request.user.is_authenticated:
-        inbox = Chat.objects.filter(to_user=request.user)
-        for chat in inbox:
-            chat_number = chat_number + 1
+    unviewed_chat_number = control_messages(request)
 
     display_list = Display.objects.filter(displayed=request.user)
     my_list = reversed(display_list)
-    return render(request, 'wheretoeat/whodisplayed.html', {'display_list': my_list, 'number': chat_number,
-                                                            'view': messages_viewed})
+    return render(request, 'wheretoeat/whodisplayed.html', {'display_list': my_list,
+                                                            'unviewed_chat_number': unviewed_chat_number})
 
 
 def venue_details(request):
