@@ -348,9 +348,8 @@ def chatmessages(request):
         from_user_to_delete = UserProfile.objects.get(username=from_user)
         to_user = request.GET.get('to_user_to_delete')
         to_user_to_delete = UserProfile.objects.get(username=to_user)
-        created = request.GET.get('create')
         chat = Chat.objects.get(message=message_to_delete, from_user=from_user_to_delete.user,
-                                to_user=to_user_to_delete.user, created=created)
+                                to_user=to_user_to_delete.user)
         chat.delete()
     if request.GET.get('view'):
         user = request.GET.get('user')

@@ -298,7 +298,7 @@
                                     <p style="text-align:right; color: grey">{{ chat.created}}</p>
                                 </div>
                                 <div class="right">
-                                    <p><a href="{% url 'wheretoeat:chatmessages' %}?message_to_delete={{ chat.message }}&from_user_to_delete={{ chat.from_user.username }}&to_user_to_delete={{ chat.to_user.username }}&create={{ chat.created }}"><span style="color:red; "class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></p>
+                                    <p><a href="{% url 'wheretoeat:chatmessages' %}?message_to_delete={{ chat.message }}&from_user_to_delete={{ chat.from_user.username }}&to_user_to_delete={{ chat.to_user.username }}"><span style="color:red; "class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></p>
                                 </div>
                             </div>
                         {% else %}
@@ -308,7 +308,7 @@
                                     <p style="text-align:right; color: grey">{{ chat.created}}</p>
                                 </div>
                                 <div class="rightto">
-                                    <p><a href="{% url 'wheretoeat:chatmessages' %}?message_to_delete={{ chat.message }}&from_user_to_delete={{ chat.from_user.username }}&to_user_to_delete={{ chat.to_user.username }}&create={{ chat.created }}"><span style="color:red; "class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></p>
+                                    <p><a href="{% url 'wheretoeat:chatmessages' %}?message_to_delete={{ chat.message }}&from_user_to_delete={{ chat.from_user.username }}&to_user_to_delete={{ chat.to_user.username }}"><span style="color:red; "class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></p>
                                 </div>
                             </div>
                         {% endif %}
@@ -363,7 +363,7 @@
                                 <tr>
                                     <td><a href="{% url 'wheretoeat:users' %}?name={{ out.to_user.username }}">{{ out.to_user}}</a></td>
                                     <td>{{ out.message}}</td>
-                                    <td><a href="{% url 'wheretoeat:chatmessages' %}?message_to_delete={{out.message}}&from_user_to_delete={{out.from_user.username}}&to_user_to_delete={{ out.to_user.username }}&create={{ out.created }}">Delete <span style="color:red; "class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                    <td><a href="{% url 'wheretoeat:chatmessages' %}?message_to_delete={{out.message}}&from_user_to_delete={{out.from_user.username}}&to_user_to_delete={{ out.to_user.username }}">Delete <span style="color:red; "class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                 </tr>
                             {% endfor %}
                         {% else %}
