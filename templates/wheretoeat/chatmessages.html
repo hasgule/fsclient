@@ -228,20 +228,17 @@
 <body>
 
     <div class="brand">The Ultimate Foursquare Client</div>
-        {% if user.is_authenticated %}
-                <div class="address-bar">
-                    {% if user.is_authenticated %}
-                            <p style="color:#33CCE6">Welcome {{ user.username }}!</p>
-                            <a href="{% url 'wheretoeat:log_out' %}" style="color:#33CCE6" >Log Out</a>
-                            <p>   </p>
-                            <a href="{% url 'wheretoeat:sign_out' %}" style="color:#33CCE6" >Delete Account</a>
-                    {% else %}
-                            <p><a href="{% url 'wheretoeat:login_user' %}" style="color:#33CCE6" >Login</a>
-                            <p>   </p><a href="{% url 'wheretoeat:signup' %}" style="color:#33CCE6">Sign Up</a></p>
-                    {% endif %}
-                </div>
-        {% endif %}
-
+        <div class="address-bar">
+            {% if request.user.is_authenticated %}
+                <p style="color:#33CCE6">Welcome {{ request.user.username }}!</p>
+                <a href="{% url 'wheretoeat:log_out' %}" style="color:#33CCE6" >Log Out</a>
+                <p>   </p>
+                <a href="{% url 'wheretoeat:sign_out' %}" style="color:#33CCE6" >Delete Account</a>
+            {% else %}
+                <p><a href="{% url 'wheretoeat:login_user' %}" style="color:#33CCE6" >Login</a>
+                <p>   </p><a href="{% url 'wheretoeat:signup' %}" style="color:#33CCE6">Sign Up</a></p>
+            {% endif %}
+        </div>
     <nav class="navbar navbar-default" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
